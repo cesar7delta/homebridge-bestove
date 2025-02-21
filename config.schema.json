@@ -1,16 +1,27 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "Bestove",
   "pluginType": "platform",
   "singular": true,
-  "strictValidation": false,
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
+      "displayName": {
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Bestove"
+      },
+      "polling": {
+        "title": "Status polling",
+        "type": "number",
+        "required": false,
+        "default": 2000
+      },
+      "ip": {
+        "title": "IP address",
+        "type": "string",
+        "default": "",
+        "required": true
       }
     }
   }
