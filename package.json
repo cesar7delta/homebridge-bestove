@@ -1,7 +1,7 @@
 {
   "name": "homebridge-bestove",
   "displayName": "Bestove",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "A short description about what your plugin does.",
   "author": "cesar7delta",
   "license": "Apache-2.0",
