@@ -1,6 +1,6 @@
 import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 
-import { fetch } from 'node-fetch';
+import fetch from 'node-fetch';
 import { BestovePlatform } from './platform';
 import { BestovePlatformConfig } from './types';
 
@@ -34,7 +34,7 @@ export class BestovePlatformAccessory {
 
   constructor(
     private readonly platform: BestovePlatform,
-    private readonly accessory: PlatformAccessory<BestovePlatformConfig>,
+    private readonly accessory: PlatformAccessory,
   ) {
 
     this.states = {
