@@ -1,7 +1,6 @@
 {
   "name": "homebridge-bestove",
   "displayName": "Bestove",
-  "type": "module",
   "version": "2.3.0",
   "description": "A short description about what your plugin does.",
   "author": "cesar7delta",
