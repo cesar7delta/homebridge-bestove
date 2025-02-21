@@ -10,7 +10,7 @@ const postOptions = (ip: string, body: string) => {
     body,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      'Content-Length': body.length,
+      'Content-Length': body.length.toString(),
       'Cookie': '_lang=fr',
       'Origin': `http://${ip}`,
       'Referer': `http://${ip}/management.html`,
