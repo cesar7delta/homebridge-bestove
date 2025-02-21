@@ -3,7 +3,6 @@ import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicVal
 import fetch from 'node-fetch';
 import { BestovePlatform } from './platform';
 import { BestovePlatformConfig } from './types';
-import { LargeNumberLike } from 'crypto';
 
 const postOptions = (ip: string, body: string) => {
   return {
