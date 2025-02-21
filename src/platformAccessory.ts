@@ -1,6 +1,6 @@
 import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 
-import fetch from 'node-fetch';
+import { fetch } from 'node-fetch';
 import { BestovePlatform } from './platform';
 import { BestovePlatformConfig } from './types';
 
@@ -19,8 +19,8 @@ const postOptions = (ip: string, body: string) => {
   };
 };
 
-const valueForRegister = (id, registers) => {
-  return ((registers || []).find(el => el[1] === id) || [])[2] || 0;
+const valueForRegister = (id: number, registers: any) => {
+  return ((registers || []).find((el: number[]) => el[1] === id) || [])[2] || 0;
 };
 
 /**
@@ -30,23 +30,20 @@ const valueForRegister = (id, registers) => {
  */
 export class BestovePlatformAccessory {
   private service: Service;
-
-  /**
-   * These are just used to create a working example
-   * You should implement your own code to track the state of your accessory
-   */
-  private states = {
-    currentHeatingCoolingState: this.platform.Characteristic.CurrentHeatingCoolingState.HEAT as CharacteristicValue,
-    targetHeatingCoolingState: this.platform.Characteristic.TargetHeatingCoolingState.HEAT as CharacteristicValue,
-    currentTemperature: 10 as CharacteristicValue,
-    targetTemperature: 10 as CharacteristicValue,
-    temperatureDisplayUnits: this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS as CharacteristicValue,
-  };
+  private states;
 
   constructor(
     private readonly platform: BestovePlatform,
     private readonly accessory: PlatformAccessory<BestovePlatformConfig>,
   ) {
+
+    this.states = {
+      currentHeatingCoolingState: this.platform.Characteristic.CurrentHeatingCoolingState.HEAT as CharacteristicValue,
+      targetHeatingCoolingState: this.platform.Characteristic.TargetHeatingCoolingState.HEAT as CharacteristicValue,
+      currentTemperature: 10 as CharacteristicValue,
+      targetTemperature: 10 as CharacteristicValue,
+      temperatureDisplayUnits: this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS as CharacteristicValue,
+    };
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -108,11 +105,11 @@ export class BestovePlatformAccessory {
     const url = `http://${ip}/ajax/get-registers`;
 
     fetch(url, postOptions(ip, 'key=020&category=2'))
-      .then(res => res.json())
-      .catch(err => {
+      .then((res: { json: () => any; }) => res.json())
+      .catch((err: any) => {
         this.platform.log.error('Watch register error:', err);
       })
-      .then(res => {
+      .then((res: { ram: any; eep: any; }) => {
         if (!res || !res.ram) {
           return;
         }

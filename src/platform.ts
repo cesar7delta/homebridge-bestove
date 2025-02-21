@@ -1,4 +1,4 @@
-import { API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service } from 'homebridge';
+import { API, Characteristic, DynamicPlatformPlugin, Logging, PlatformAccessory, PlatformConfig, Service } from 'homebridge';
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 
 import { BestovePlatformAccessory } from './platformAccessory';
@@ -10,17 +10,20 @@ import { BestovePlatformConfig } from './types';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class BestovePlatform implements DynamicPlatformPlugin {
-  public readonly Service: typeof Service = this.api.hap.Service;
-  public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+  public readonly Service: typeof Service;
+  public readonly Characteristic: typeof Characteristic;
 
   // this is used to track restored cached accessories
-  public readonly accessories: PlatformAccessory<BestovePlatformConfig>[] = [];
+  public readonly accessories: Map<string, PlatformAccessory> = new Map();
+  public readonly discoveredCacheUUIDs: string[] = [];
 
   constructor(
-    public readonly log: Logger,
+    public readonly log: Logging,
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    this.Service = api.hap.Service;
+    this.Characteristic = api.hap.Characteristic;
     this.log.debug('Finished initializing platform:', this.config.displayName);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
@@ -38,11 +41,11 @@ export class BestovePlatform implements DynamicPlatformPlugin {
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
-  configureAccessory(accessory: PlatformAccessory<BestovePlatformConfig>) {
+  configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    this.accessories.set(accessory.UUID, accessory);
   }
 
   /**
@@ -54,7 +57,7 @@ export class BestovePlatform implements DynamicPlatformPlugin {
     const { ip, displayName } = this.config as BestovePlatformConfig;
 
     const uuid = this.api.hap.uuid.generate(displayName);
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+    const existingAccessory = this.accessories.get(uuid);
 
     if (existingAccessory) {
       if (ip) {
@@ -68,7 +71,7 @@ export class BestovePlatform implements DynamicPlatformPlugin {
       }
     } else {
       this.log.info(`Adding new accessory: ${displayName} (${ip})`);
-      const accessory: PlatformAccessory<BestovePlatformConfig> = new this.api.platformAccessory(displayName, uuid);
+      const accessory: PlatformAccessory = new this.api.platformAccessory(displayName, uuid);
       accessory.context.ip = ip;
 
       new BestovePlatformAccessory(this, accessory);
