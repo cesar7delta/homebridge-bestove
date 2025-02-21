@@ -3,6 +3,7 @@ import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicVal
 import fetch from 'node-fetch';
 import { BestovePlatform } from './platform';
 import { BestovePlatformConfig } from './types';
+import { LargeNumberLike } from 'crypto';
 
 const postOptions = (ip: string, body: string) => {
   return {
@@ -19,7 +20,7 @@ const postOptions = (ip: string, body: string) => {
   };
 };
 
-const valueForRegister = (id: number, registers: any) => {
+const valueForRegister = (id: number, registers: number[][]) => {
   return ((registers || []).find((el: number[]) => el[1] === id) || [])[2] || 0;
 };
 
@@ -105,11 +106,11 @@ export class BestovePlatformAccessory {
     const url = `http://${ip}/ajax/get-registers`;
 
     fetch(url, postOptions(ip, 'key=020&category=2'))
-      .then((res: { json: () => any; }) => res.json())
-      .catch((err: any) => {
+      .then(res => res.json())
+      .catch(err => {
         this.platform.log.error('Watch register error:', err);
       })
-      .then((res: { ram: any; eep: any; }) => {
+      .then(res => {
         if (!res || !res.ram) {
           return;
         }
